@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Sauter</title>
+    <title>Sauter {{ $found ? "- $post->author_username" : '' }}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
