@@ -12,22 +12,23 @@
         </div>
     </a>
 
+    @if ($currentUser == $authorUser)
+    <div id="content-edit-{{ $postId }}" class="hidden text-black block">
+        <form id="edit-form-{{ $postId }}" role="form" action="/post/edit/{{$postId}}" method="post" enctype="multipart/form-data">
+            @csrf
+            <input type="text" class="w-full py-2 px-2
+                    bg-gray-200/60 rounded-md mt-2"
+                name="content" id="edit-content"
+                value="{{ $content }}" required />
+        </form>
+    </div>
+    @endif
+
     <a href="/post/{{ $postId }}">
-        <div>
-            <span id="content-fixed-{{ $postId }}" class="text-black block px-1">
+        <div id="content-fixed-{{ $postId }}">
+            <span class="text-black block px-1">
                 {{ $content }}
             </span>
-            @if ($currentUser == $authorUser)
-            <div id="content-edit-{{ $postId }}" class="hidden text-black block">
-                <form id="edit-form-{{ $postId }}" role="form" action="/post/edit/{{$postId}}" method="post" enctype="multipart/form-data">
-                    @csrf
-                    <input type="text" class="w-full py-2 px-2
-                    bg-gray-200/60 rounded-md mt-2"
-                        name="content" id="edit-content"
-                        value="{{ $content }}" required />
-                </form>
-            </div>
-            @endif
         </div>
     </a>
 
