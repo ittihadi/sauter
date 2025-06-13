@@ -58,7 +58,7 @@
             <x-post
                 current-user="{{ Auth::check() ? Auth::user()->name : 0 }}"
                 author-user='{{ $reply->author_username }}'
-                author-display='{{ $post->author_displayname }}'
+                author-display='{{ $reply->author_displayname }}'
                 content='{{ $reply->content }}'
                 post-id='{{ $reply->post_id }}'
                 time='{{ $reply->created }}'
