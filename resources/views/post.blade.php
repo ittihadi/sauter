@@ -38,7 +38,8 @@
                     <input type="text" class="w-full bg-transparent p-2
                         focus:outline-0 focus:bg-gray-100/60 rounded-md
                         text-gray-500 text-md grow" name="content"
-                        id="post-content" placeholder="Reply..." required />
+                        autocomplete="off" id="post-content" placeholder="Reply..."
+                        required />
                     <button type="submit" class="
                             text-gray-50 font-medium cursor-pointer
                             text-md px-3 py-1 bg-gray-300 rounded-md

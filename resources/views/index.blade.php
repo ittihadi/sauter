@@ -26,7 +26,7 @@
                 @csrf
                 <input type="text" class="w-full bg-transparent p-2
                         focus:outline-0 focus:bg-gray-100/60 rounded-md
-                        text-gray-500 mt-2 text-lg" name="content"
+                        text-gray-500 mt-2 text-lg" name="content" autocomplete="off"
                     id="post-content" placeholder="Say something..." required />
                 <hr class="border-gray-200 mt-1" />
                 <div class="w-full flex items-center">
@@ -65,7 +65,8 @@
         <div class="w-full sm:w-2xl h-16 p-2 fixed bottom-0
                 sm:right-1/2 sm:transform sm:translate-x-1/2
                 bg-gray-50 border-t border-l border-r border-gray-300 shadow-md
-                grid {{ $guest ? 'grid-cols-3' : 'grid-cols-5' }} gap-2">
+                grid {{ $guest ? 'grid-cols-1' : 'grid-cols-5' }} gap-2">
+            @if (!$guest)
             <div class="inline-grid justify-items-center">
                 <div class="group h-full relative">
                     <a class="cursor-pointer px-8 h-full flex items-center
@@ -85,7 +86,6 @@
                     </div>
                 </div>
             </div>
-            @if (!$guest)
             <div class="inline-grid justify-items-center">
                 <div class="group h-full relative">
                     <a class="cursor-pointer px-8 h-full flex items-center
@@ -123,8 +123,8 @@
                     </div>
                 </div>
             </div>
-            <div></div>
             @if (!$guest)
+            <div></div>
             <div class="inline-grid justify-items-center">
                 <div class="group h-full relative">
                     <a class="cursor-pointer px-8 h-full flex items-center
