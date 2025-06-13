@@ -20,7 +20,7 @@
 
         <!-- Upload widget, hidden by default -->
         <div id="new-post-widget" class="hidden sticky top-16 w-full bg-gray-50 p-4
-                border-b border-gray-200 shadow-md transition-opacity">
+                border-b border-gray-200 shadow-md transition-opacity z-100">
             <span class="text-gray-600 text-2xl px-2">New Post</span>
             <form role="form" action="/post/new" method="post" enctype="multipart/form-data">
                 @csrf
