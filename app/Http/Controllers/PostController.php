@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Follower;
 use App\Models\Post;
+use App\Models\SavedPost;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
 
@@ -17,16 +19,21 @@ class PostController extends Controller
      */
     public function showHome(): View
     {
+        $saves = SavedPost::query()
+            ->where('save_author_id', '=', Auth::check() ? Auth::user()->id : 0);
+
         $posts = Post::query()
             ->join('users', 'users.id', '=', 'posts.author')
             ->leftJoin('user_profiles', 'users.id', '=', 'user_profiles.user_id')
+            ->leftJoinSub($saves, 'saves', 'saves.save_post_id', '=', 'posts.post_id')
             ->select(
                 'users.name as author_username',
                 'user_profiles.display_name as author_displayname',
                 'posts.content as content',
                 'posts.post_id as post_id',
                 'posts.created_at as created',
-                'posts.updated_at as updated'
+                'posts.updated_at as updated',
+                DB::raw('CASE WHEN saves.save_post_id IS NULL THEN 0 ELSE 1 END AS saved'),
             )
             ->where('posts.parent_post_id', '=', null)
             ->orderByDesc('created')
@@ -36,6 +43,7 @@ class PostController extends Controller
             'guest' => !Auth::check(),
             'posts' => $posts,
             'feed' => false,
+            'saves' => false,
         ]);
     }
 
@@ -47,6 +55,9 @@ class PostController extends Controller
         $followings = Follower::query()
             ->where('follow_sender_id', '=', Auth::user()->id);
 
+        $saves = SavedPost::query()
+            ->where('save_author_id', '=', Auth::user()->id);
+
         $posts = Post::query()
             ->join('users', 'users.id', '=', 'posts.author')
             ->joinSub(
@@ -56,6 +67,13 @@ class PostController extends Controller
                 '=',
                 'users.id'
             )
+            ->leftJoinSub(
+                $saves,
+                'saves',
+                'saves.save_post_id',
+                '=',
+                'posts.post_id'
+            )
             ->leftJoin('user_profiles', 'users.id', '=', 'user_profiles.user_id')
             ->select(
                 'users.name as author_username',
@@ -63,7 +81,8 @@ class PostController extends Controller
                 'posts.content as content',
                 'posts.post_id as post_id',
                 'posts.created_at as created',
-                'posts.updated_at as updated'
+                'posts.updated_at as updated',
+                DB::raw('CASE WHEN saves.save_post_id IS NULL THEN 0 ELSE 1 END AS saved'),
             )
             ->where('posts.parent_post_id', '=', null)
             ->orderByDesc('created')
@@ -73,6 +92,42 @@ class PostController extends Controller
             'guest' => !Auth::check(),
             'posts' => $posts,
             'feed' => true,
+            'saves' => false,
+        ]);
+    }
+
+    public function showSaved(): View
+    {
+        $saves = SavedPost::query()
+            ->where('save_author_id', '=', Auth::user()->id);
+
+        $posts = Post::query()
+            ->join('users', 'users.id', '=', 'posts.author')
+            ->joinSub(
+                $saves,
+                'saves',
+                'saves.save_post_id',
+                '=',
+                'posts.post_id'
+            )
+            ->leftJoin('user_profiles', 'users.id', '=', 'user_profiles.user_id')
+            ->select(
+                'users.name as author_username',
+                'user_profiles.display_name as author_displayname',
+                'posts.content as content',
+                'posts.post_id as post_id',
+                'posts.created_at as created',
+                'posts.updated_at as updated',
+                DB::raw('CASE WHEN saves.save_post_id IS NULL THEN 0 ELSE 1 END AS saved'),
+            )
+            ->orderByDesc('saves.created_at')
+            ->get();
+
+        return view('index', [
+            'guest' => !Auth::check(),
+            'posts' => $posts,
+            'feed' => false,
+            'saves' => true,
         ]);
     }
 
@@ -204,6 +259,42 @@ class PostController extends Controller
         $newPost->parent_post_id = $id;
 
         $newPost->save();
+
+        return back();
+    }
+
+    public function save(string $id): RedirectResponse
+    {
+        // Make sure parent post exists
+        $parent = Post::query()->find($id);
+        if (!$parent) {
+            return back()->withErrors(['parent' => 'Parent post doesn\'t exist']);
+        }
+
+        $oldSave = SavedPost::query()
+            ->where('save_author_id', '=', Auth::user()->id)
+            ->where('save_post_id', '=', $id)
+            ->get();
+        if ($oldSave->count() > 0)
+            return back()->withErrors(['existing' => 'Post already saved']);
+
+        $newSave = new SavedPost;
+
+        $newSave->save_author_id = Auth::user()->id;
+        $newSave->save_post_id = $id;
+
+        $newSave->save();
+
+        return back();
+    }
+
+    public function unsave(string $id): RedirectResponse
+    {
+        // Find logged in user's save of message and delete
+        SavedPost::query()
+            ->where('save_author_id',  '=', Auth::user()->id)
+            ->where('save_post_id', '=', $id)
+            ->delete();
 
         return back();
     }

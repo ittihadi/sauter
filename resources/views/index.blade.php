@@ -16,7 +16,7 @@
 <body class="bg-zinc-100">
     <div class="mx-auto min-h-dvh w-full sm:w-2xl bg-white shadow-xl border-x border-gray-300">
         <!-- Header bar, sticky to the top -->
-        <x-header :$guest title="{{$feed ? 'Following' : 'Home'}}" />
+        <x-header :$guest title="{{$feed ? 'Following' : ($saves ? 'Saved' : 'Home')}}" />
 
         <!-- Upload widget, hidden by default -->
         <div id="new-post-widget" class="hidden sticky top-16 w-full bg-gray-50 p-4
@@ -57,7 +57,8 @@
                 author-display='{{ $post->author_displayname }}'
                 content='{{ $post->content }}'
                 post-id='{{ $post->post_id }}'
-                time='{{ $post->created }}' />
+                time='{{ $post->created }}'
+                saved='{{ $post->saved }}' />
             @endforeach
         </div>
 
@@ -124,7 +125,26 @@
                 </div>
             </div>
             @if (!$guest)
-            <div></div>
+            <div class="inline-grid justify-items-center">
+                <div class="group h-full relative">
+                    <a class="cursor-pointer px-8 h-full flex items-center
+                        text-lg text-green-800/80
+                        bg-gray-100/90 hover:bg-gray-200/70 active:bg-gray-200
+                        border border-gray-200 shadow-md rounded-full
+                            transition-colors motion-reduce:transition-none duration-100"
+                        href="/saved">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="18" viewBox="0 0 384 512"
+                            class="fill-gray-600"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+                            <path d="M0 48V487.7C0 501.1 10.9 512 24.3 512c5 0 9.9-1.5 14-4.4L192 400 345.7 507.6c4.1 2.9 9 4.4 14 4.4c13.4 0 24.3-10.9 24.3-24.3V48c0-26.5-21.5-48-48-48H48C21.5 0 0 21.5 0 48z" />
+                        </svg>
+                    </a>
+                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 z-10
+                            inline-block px-4 py-2 text-md text-gray-600 bg-gray-100 w-max
+                            rounded-lg shadow-sm opacity-0 group-hover:opacity-100 group-active:opacity-100">
+                        Saved Posts
+                    </div>
+                </div>
+            </div>
             <div class="inline-grid justify-items-center">
                 <div class="group h-full relative">
                     <a class="cursor-pointer px-8 h-full flex items-center

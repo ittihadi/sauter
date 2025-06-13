@@ -15,11 +15,15 @@ Route::get('/post/{id}', [PostController::class, 'show']);
 // Things that need authentication go here
 Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::get('/following', [PostController::class, 'showFollowing'])->name('feed');
+    Route::get('/saved', [PostController::class, 'showSaved'])->name('saved');
 
     Route::post('/post/new', [PostController::class, 'store']);
     Route::post('/post/edit/{id}', [PostController::class, 'edit']);
     Route::get('/post/delete/{id}', [PostController::class, 'delete']);
     Route::post('/post/reply/{id}', [PostController::class, 'reply']);
+
+    Route::post('/post/save/{id}', [PostController::class, 'save']);
+    Route::post('/post/unsave/{id}', [PostController::class, 'unsave']);
 
     Route::get('/profile/me', function () {
         $username = Auth::user()->name;
