@@ -49,19 +49,18 @@
     <div id="content-edit-{{ $postId }}" class="hidden text-black block">
         <form id="edit-form-{{ $postId }}" role="form" action="/post/edit/{{$postId}}" method="post" enctype="multipart/form-data">
             @csrf
-            <input type="text" class="w-full py-2 px-2
-                    bg-gray-200/60 rounded-md mt-2"
-                name="content" id="edit-content"
-                value="{{ $content }}" required />
+            <textarea class="w-full py-2 px-2
+                    bg-gray-200/60 rounded-md mt-2 resize-y"
+                    rows="3" name="content" autocomplete="off"
+                id="edit-content" required
+            >{{ html_entity_decode(trim($content)) }}</textarea>
         </form>
     </div>
     @endif
 
     <a href="/post/{{ $postId }}">
         <div id="content-fixed-{{ $postId }}">
-            <span class="text-black block px-1">
-                {{ $content }}
-            </span>
+            <span class="text-black block px-1 whitespace-pre-wrap">{{ html_entity_decode(trim($content)) }}</span>
         </div>
     </a>
 
