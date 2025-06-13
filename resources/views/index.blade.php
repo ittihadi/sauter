@@ -24,10 +24,13 @@
             <span class="text-gray-600 text-2xl px-2">New Post</span>
             <form role="form" action="/post/new" method="post" enctype="multipart/form-data">
                 @csrf
-                <input type="text" class="w-full bg-transparent p-2
+                <textarea class="w-full bg-transparent p-2
                         focus:outline-0 focus:bg-gray-100/60 rounded-md
-                        text-gray-500 mt-2 text-lg" name="content" autocomplete="off"
-                    id="post-content" placeholder="Say something..." required />
+                        text-gray-500 mt-2 text-lg resize-y"
+                    rows="3"
+                    name="content" autocomplete="off"
+                    id="post-content" placeholder="Say something..." required>
+                    </textarea>
                 <hr class="border-gray-200 mt-1" />
                 <div class="w-full flex items-center">
                     <div class="grow"></div>
